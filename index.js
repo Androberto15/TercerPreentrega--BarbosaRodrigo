@@ -64,143 +64,90 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //PRODUCTOS
 document.addEventListener('DOMContentLoaded', function() {
-    const productos = [
+  const contenedorProductos = document.getElementById('productos');
+  
+  // Array de nombres de las imágenes en la carpeta "imgs"
+  const imagenes = [
+      "imgs/1.jpg",
+      "imgs/2.jpg",
+      "imgs/3.jpg",
+      "imgs/4.jpg",
+      "imgs/5.jpg",
+      "imgs/6.jpg",
+      "imgs/7.jpg",
+      "imgs/8.jpg",
+      "imgs/9.jpg",
+      "imgs/10.jpg"
+  ];
 
-        {
-          id: 1,
-          nombre: "Cafe1",
-          precio: 1000,
-          imagen: "https://placehold.co/200x200"
-        },
-        {
-          id: 2,
-          nombre: "Cafe2",
-          precio: 1500,
-          imagen: "https://placehold.co/200x200"
-        },
-        {
-          id: 3,
-          nombre: "Café3",
-          precio: 750,
-          imagen: "https://placehold.co/200x200"
-        },
-        {
-          id: 4,
-          nombre: "Café4",
-          precio: 900,
-          imagen: "https://placehold.co/200x200"
-        },
-        {
-          id: 5,
-          nombre: "Café 5",
-          precio: 350,
-          imagen: "https://placehold.co/200x200"
-        },
-        {
-          id: 6,
-          nombre: "Café 6",
-          precio: 875,
-          imagen: "https://placehold.co/200x200"
-        }
-      ];
-    
+  // Precios de los productos
+  const precios = [1000, 1500, 750, 900, 350, 875, 1200, 1800, 950, 600];
 
+  // Títulos de los productos
+  const titulos = [
+      "Espresso",
+      "Americano",
+      "Cappuccino",
+      "Latte",
+      "Mocha",
+      "Macchiato",
+      "Affogato",
+      "Flat White",
+      "Cortado",
+      "Frappé"
+  ];
 
+  // Realiza una solicitud HTTP a la API para obtener los productos
+  fetch('https://fake-coffee-api.vercel.app/api')
+      .then(response => response.json())
+      .then(data => {
+          // Procesa los datos recibidos y muestra los primeros 10 productos en la página
+          for (let i = 0; i < 10; i++) {
+              const producto = data[i];
+              const divProducto = document.createElement('div');
+              divProducto.classList.add('producto');
 
-    
+              const imagen = document.createElement('img');
+              imagen.src = imagenes[i]; // Asigna la imagen correspondiente según el índice
+              imagen.alt = titulos[i];
 
-    const contenedorProductos = document.getElementById('productos');
+              const nombrePrecio = document.createElement('p');
+              nombrePrecio.textContent = `${titulos[i]} - $${precios[i]}`;
 
+              const botonAdd = document.createElement('button');
+              botonAdd.classList.add('btn-add');
+              botonAdd.setAttribute('id', 'producto_' + producto.id); // ID 
+              botonAdd.setAttribute('data-producto', titulos[i]);
+              botonAdd.setAttribute('data-precio', precios[i]);
+              botonAdd.innerHTML = '<i class="fas fa-cart-plus"></i> Añadir al carro';
+              botonAdd.addEventListener('click', addToCart);
 
+              botonAdd.addEventListener('click', function() {
+                  Toastify({
+                      text: 'Producto añadido al carro: ' + titulos[i],
+                      duration: 1000,
+                      gravity: 'top',
+                      backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+                      stopOnFocus: true,
+                  }).showToast();
+              });
 
-    productos.forEach(producto => {
-        const divProducto = document.createElement('div');
-        divProducto.classList.add('producto');
+              divProducto.appendChild(imagen);
+              divProducto.appendChild(nombrePrecio);
+              divProducto.appendChild(botonAdd);
 
-        const imagen = document.createElement('img');
-        imagen.src = producto.imagen;
-        imagen.alt = producto.nombre;
-
-        const nombrePrecio = document.createElement('p');
-        nombrePrecio.textContent = `${producto.nombre} - $${producto.precio}`;
-
-        
-
-        const botonAdd = document.createElement('button');
-        botonAdd.classList.add('btn-add');
-        botonAdd.setAttribute('id', 'producto_' + producto.id); // ID 
-        botonAdd.setAttribute('data-producto', producto.nombre);
-        botonAdd.setAttribute('data-precio', producto.precio);
-        botonAdd.innerHTML = '<i class="fas fa-cart-plus"></i> Añadir al carro';
-        botonAdd.addEventListener('click', addToCart);
-
-        botonAdd.addEventListener('click', function() {
-          Toastify({
-              text: 'Producto añadido al carro: ' + producto.nombre,
-              duration: 1000, // 
-              gravity: 'top', // Posición del mensaj
-              backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)', 
-              stopOnFocus: true, // Detener el conteo cuando se hace clic en el mensaje
-          }).showToast();
+              contenedorProductos.appendChild(divProducto);
+          }
+      })
+      .catch(error => {
+          console.error('Se produjo un error al obtener los productos:', error);
       });
-      
-
-
-
-        divProducto.appendChild(imagen);
-        divProducto.appendChild(nombrePrecio);
-        divProducto.appendChild(botonAdd);
-
-        contenedorProductos.appendChild(divProducto);
-        
-    });
-
-
-
-    //Funcion buscar elementos:: NO LO PUEDO HACER ANDAR AUN :@, si me podes ayudar lo agradeceria
-
- /*   const botonBuscar = document.getElementById('botonBuscar');
-    botonBuscar.addEventListener('click', buscarProductos);
-
-    function buscarProductos() {
-        const busqueda = document.getElementById('busqueda').value.trim().toLowerCase();
-        const resultados = productos.filter(producto => producto.nombre.toLowerCase().includes(busqueda));
-        mostrarResultados(resultados);
-    }
-
-    function mostrarResultados(resultados) {
-        const resultadosDiv = document.getElementById('resultados');
-        resultadosDiv.innerHTML = '';
-
-        resultados.forEach(producto => {
-            const productoDiv = document.createElement('div');
-            productoDiv.innerHTML = `
-                <h3>${producto.nombre}</h3>
-                <p>Precio: ${producto.precio}</p>
-                <img src="${producto.imagen}" alt="${producto.nombre}">
-            `;
-            resultadosDiv.appendChild(productoDiv);
-        });
-    }
-
-*/
-
-const toastify = document.getElementById('botonBuscar');
-
-
-
-document.getElementById('toastify').addEventListener('click', function() {
-  Toastify({
-      text: "Todavía no logro hacer andar el buscador",
-      duration: 2000,
-      newWindow: true,
-      close: true,
-      gravity: "top", 
-      position: "right", 
-      backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)", 
-      stopOnFocus: true,
-  }).showToast();
 });
+
+// Función addToCart simulada para evitar errores
+function addToCart() {
+  console.log('Producto añadido al carro');
+}
 
 
 
@@ -322,7 +269,7 @@ function finalizarCompra() {
 
 
     
-});
+
 
 
 
